@@ -22,7 +22,9 @@ function makeGraphs(error, salaryData) {
     
     //console.log(salaryData[0]);
     
+    show_discipline_selector(ndx);
     show_gender_balance(ndx);
+    show_average_salary(ndx);
     
     dc.renderAll();
 }
@@ -57,50 +59,23 @@ function show_gender_balance(ndx) {
     gender_balance.yAxis().ticks(20);
 }
 
-
-// function makeGraphs(error, salaryData) {
-//     var ndx = crossfilter(salaryData);
+function show_discipline_selector(ndx) {
+    var dim = ndx.dimension(dc.pluck('discipline'));
+    var group = dim.group();
     
-//     salaryData.forEach(function(d){
-//         d.salary = parseInt(d.salary);
-//     })
-    
-//     show_discipline_selector(ndx);
-//     show_gender_balance(ndx);
-//     show_average_salary(ndx);
-    
-//     dc.renderAll();
-// }
-
-// function show_discipline_selector(ndx) {
-//     var dim = ndx.dimension(dc.pluck('discipline'));
-//     var group = dim.group();
-    
-//     dc.selectMenu("#discipline-selector")
-//         .dimension(dim)
-//         .group(group);
-// }
+    dc.selectMenu("#discipline-selector")
+        .dimension(dim)
+        .group(group);
+        
+    // the option text can be set via the title() function
+    // by default the option text is '`key`: `value`'
+    //select.title(function (d){
+    //    return 'STATE: ' + d.key;
+    //});
+}
 
 
-// function show_gender_balance(ndx) {
-//     var dim = ndx.dimension(dc.pluck('sex'));
-//     var group = dim.group();
-    
-//     dc.barChart("#gender-balance")
-//         .width(400)
-//         .height(300)
-//         .margins({top: 10, right: 50, bottom: 30, left: 50})
-//         .dimension(dim)
-//         .group(group)
-//         .transitionDuration(500)
-//         .x(d3.scale.ordinal())
-//         .xUnits(dc.units.ordinal)
-//         .xAxisLabel("Gender")
-//         .yAxis().ticks(20);
-// }
-
-
-// function show_average_salary(ndx) {
+function show_average_salary(ndx) {
 //     var dim = ndx.dimension(dc.pluck('sex'));
     
 //     function add_item(p, v) {
@@ -143,4 +118,4 @@ function show_gender_balance(ndx) {
 //         .elasticY(true)
 //         .xAxisLabel("Gender")
 //         .yAxis().ticks(4);   
-// }
+}

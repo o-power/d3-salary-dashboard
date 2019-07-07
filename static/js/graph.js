@@ -44,7 +44,7 @@ function show_gender_balance(ndx) {
     //0: {key: "Female", value: 39}
     //1: {key: "Male", value: 358}
     
-    var gender_balance = dc.barChart("#gender-balance")
+    var genderBalanceChart = dc.barChart("#gender-balance")
         .width(400)
         .height(300)
         .margins({top: 10, right: 50, bottom: 30, left: 50})
@@ -56,7 +56,7 @@ function show_gender_balance(ndx) {
         .xAxisLabel("Gender");
    
     // Set a custom tick format. Both .yAxis() and .xAxis() return an axis object, so any additional method chaining applies to the axis, not the chart.
-    gender_balance.yAxis().ticks(20);
+    genderBalanceChart.yAxis().ticks(20);
 }
 
 function show_discipline_selector(ndx) {
@@ -102,26 +102,31 @@ function show_average_salary(ndx) {
     }
     
     // initial (provides the start value)
-    // initializes the p object by defining its components
+    // initialises the p object by defining its components
     function initialise() {
         return {count: 0, total: 0, average: 0};
     }
+    
+    // calculate the average salary by sex
+    var averageSalaryByGender = dim.group().reduce(add_item, remove_item, initialise);
 
-//     var averageSalaryByGender = dim.group().reduce(add_item, remove_item, initialise);
-
-//     dc.barChart("#average-salary")
-//         .width(400)
-//         .height(300)
-//         .margins({top: 10, right: 50, bottom: 30, left: 50})
-//         .dimension(dim)
-//         .group(averageSalaryByGender)
-//         .valueAccessor(function(d){
-//             return d.value.average.toFixed(2);
-//         })
-//         .transitionDuration(500)
-//         .x(d3.scale.ordinal())
-//         .xUnits(dc.units.ordinal)
-//         .elasticY(true)
-//         .xAxisLabel("Gender")
-//         .yAxis().ticks(4);   
+    var averageSalaryChart = dc.barChart("#average-salary")
+        .width(400)
+        .height(300)
+        .margins({top: 10, right: 50, bottom: 30, left: 50})
+        .dimension(dim)
+        .group(averageSalaryByGender)
+        // averageSalaryByGender is multi-value
+        // we have count, total, average so we need to tell dc which one we want
+        // converting here to 2 decimal places as well
+        .valueAccessor(function(d) {
+            return d.value.average.toFixed(2);
+        })
+        .transitionDuration(500)
+        .x(d3.scale.ordinal())
+        .xUnits(dc.units.ordinal)
+        .elasticY(true)
+        .xAxisLabel("Gender");
+    
+    averageSalaryChart.yAxis().ticks(4);
 }

@@ -42,7 +42,7 @@ function show_gender_balance(ndx) {
     //0: {key: "Female", value: 39}
     //1: {key: "Male", value: 358}
     
-    dc.barChart("#gender-balance")
+    var gender_balance = dc.barChart("#gender-balance")
         .width(400)
         .height(300)
         .margins({top: 10, right: 50, bottom: 30, left: 50})
@@ -51,8 +51,10 @@ function show_gender_balance(ndx) {
         .transitionDuration(500)
         .x(d3.scale.ordinal())
         .xUnits(dc.units.ordinal)
-        .xAxisLabel("Gender")
-        .yAxis().ticks(20);
+        .xAxisLabel("Gender");
+   
+    // Set a custom tick format. Both .yAxis() and .xAxis() return an axis object, so any additional method chaining applies to the axis, not the chart.
+    gender_balance.yAxis().ticks(20);
 }
 
 

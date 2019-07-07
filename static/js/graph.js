@@ -76,30 +76,36 @@ function show_discipline_selector(ndx) {
 
 
 function show_average_salary(ndx) {
-//     var dim = ndx.dimension(dc.pluck('sex'));
+    var dim = ndx.dimension(dc.pluck('sex'));
     
-//     function add_item(p, v) {
-//         p.count++;
-//         p.total += v.salary;
-//         p.average = p.total / p.count;
-//         return p;
-//     }
-
-//     function remove_item(p, v) {
-//         p.count--;
-//         if(p.count == 0) {
-//             p.total = 0;
-//             p.average = 0;
-//         } else {
-//             p.total -= v.salary;
-//             p.average = p.total / p.count;
-//         }
-//         return p;
-//     }
+    // add (for when records are added to the filtered selection)
+    // p is an object that keeps a track of the sum or count for you and thus represents your end goal
+    // v represents a record of the input data. It is replaced by a new line of data every time you call the function.
+    function add_item(p, v) {
+        p.count++;
+        p.total += v.salary;
+        p.average = p.total / p.count;
+        return p;
+    }
     
-//     function initialise() {
-//         return {count: 0, total: 0, average: 0};
-//     }
+    // remove (for when records are removed from the filtered selection)
+    function remove_item(p, v) {
+        p.count--;
+        if(p.count == 0) {
+            p.total = 0;
+            p.average = 0;
+        } else {
+            p.total -= v.salary;
+            p.average = p.total / p.count;
+        }
+        return p;
+    }
+    
+    // initial (provides the start value)
+    // initializes the p object by defining its components
+    function initialise() {
+        return {count: 0, total: 0, average: 0};
+    }
 
 //     var averageSalaryByGender = dim.group().reduce(add_item, remove_item, initialise);
 

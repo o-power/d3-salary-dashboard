@@ -25,6 +25,7 @@ function makeGraphs(error, salaryData) {
     show_discipline_selector(ndx);
     show_gender_balance(ndx);
     show_average_salary(ndx);
+    show_rank_distribution(ndx);
     
     dc.renderAll();
 }
@@ -79,7 +80,7 @@ function show_average_salary(ndx) {
     var dim = ndx.dimension(dc.pluck('sex'));
     
     // add (for when records are added to the filtered selection)
-    // p is an object that keeps a track of the sum or count for you and thus represents your end goal
+    // p is an object that keeps a track of the sum or count for you and thus represents your end goal (the accumulator)
     // v represents a record of the input data. It is replaced by a new line of data every time you call the function.
     function add_item(p, v) {
         p.count++;
@@ -130,3 +131,60 @@ function show_average_salary(ndx) {
     
     averageSalaryChart.yAxis().ticks(4);
 }
+
+function show_rank_distribution(ndx) {
+    var dim = ndx.dimension(dc.pluck('sex'));
+    
+    // var profByGender = dim.group().reduce(
+    //         function(p, v) {
+    //             p.total++;
+    //             if (v.rank == "Prof") {
+    //                 p.match++;
+    //             }
+    //             return p;
+    //         },
+    //         function(p, v) {
+    //             p.total--;
+    //             if (v.rank == "Prof") {
+    //                 p.match--;
+    //             }
+    //             return p;
+    //         },
+    //         function() {
+    //             return {total: 0, match: 0};
+    //         }
+    //     );
+    
+    //0: {key: "Female", value: {total: 39, match: 18}}
+    //1: {key: "Male", value: {total: 358, match: 248}}
+    //console.log(profByGender.all();
+    
+    function rankByGender(dimension, rank) {
+        return dimension.group().reduce(
+            function(p, v) {
+                p.total++;
+                if (v.rank == rank) {
+                    p.match++;
+                }
+                return p;
+            },
+            function(p, v) {
+                p.total--;
+                if (v.rank == rank) {
+                    p.match--;
+                }
+                return p;
+            },
+            function() {
+                return {total: 0, match: 0};
+            }
+        );
+    }
+    
+    var asstProfByGender = rankByGender(dim,"AsstProf");
+    var assocProfByGender = rankByGender(dim,"AssocProf");
+    var profByGender = rankByGender(dim,"Prof");
+    
+    //console.log(profByGender.all());
+    //console.log(asstProfByGender.all());
+} 

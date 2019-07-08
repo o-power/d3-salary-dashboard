@@ -26,6 +26,8 @@ function makeGraphs(error, salaryData) {
     show_gender_balance(ndx);
     show_average_salary(ndx);
     show_rank_distribution(ndx);
+    show_percent_that_are_professors(ndx, "Female", "#percent-of-female-professors");
+    show_percent_that_are_professors(ndx, "Male", "#percent-of-men-professors");
     
     dc.renderAll();
 }
@@ -111,7 +113,7 @@ function show_average_salary(ndx) {
     // calculate the average salary by sex
     var averageSalaryByGender = dim.group().reduce(add_item, remove_item, initialise);
     
-    // console.log(averageSalaryByGender.all());
+    //console.log(averageSalaryByGender.all());
     //0: {key: "Female", value: {count: 39, total: 3939094, average: 101002.41025641025}}
     //1: {key: "Male", value: {count: 358, total: 41202370, average: 115090.41899441341}}
     
@@ -211,3 +213,43 @@ function show_rank_distribution(ndx) {
         .legend(dc.legend().x(320).y(20).itemHeight(15).gap(5))
         .margins({top: 10, right: 100, bottom: 30, left: 30});
 } 
+
+function show_percent_that_are_professors(ndx, gender, element) {
+    // .groupAll() is a convenience function for grouping all records and reducing to a single value. 
+    var percentageThatAreProf = ndx.groupAll().reduce(
+        function(p, v) {
+            if (v.sex === gender) {
+                p.count++;
+                if(v.rank === "Prof") {
+                    p.are_prof++;
+                }
+            }
+            return p;
+        },
+        function(p, v) {
+            if (v.sex === gender) {
+                p.count--;
+                if(v.rank === "Prof") {
+                    p.are_prof--;
+                }
+            }
+            return p;
+        },
+        function() {
+            return {count: 0, are_prof: 0};    
+        },
+    );
+    
+    console.log(percentageThatAreProf.count);
+    
+    dc.numberDisplay(element)
+        .formatNumber(d3.format(".2%"))
+        .valueAccessor(function (d) {
+            if (d.count == 0) {
+                return 0;
+            } else {
+                return (d.are_prof / d.count);
+            }
+        })
+        .group(percentageThatAreProf)
+}

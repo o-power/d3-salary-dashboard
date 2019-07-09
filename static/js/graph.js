@@ -18,6 +18,7 @@ function makeGraphs(error, salaryData) {
     // The forEach() method calls a function once for each element in an array, in order.
     salaryData.forEach(function(d) {
         d.salary = parseInt(d.salary);
+        d["yrs.service"] = parseInt(d["yrs.service"]);
     });
     
     //console.log(salaryData[0]);
@@ -28,6 +29,7 @@ function makeGraphs(error, salaryData) {
     show_rank_distribution(ndx);
     show_percent_that_are_professors(ndx, "Female", "#percent-of-female-professors");
     show_percent_that_are_professors(ndx, "Male", "#percent-of-men-professors");
+    show_service_to_salary_correlation(ndx);
     
     dc.renderAll();
 }
@@ -240,8 +242,6 @@ function show_percent_that_are_professors(ndx, gender, element) {
         },
     );
     
-    console.log(percentageThatAreProf.count);
-    
     dc.numberDisplay(element)
         .formatNumber(d3.format(".2%"))
         .valueAccessor(function (d) {
@@ -252,4 +252,38 @@ function show_percent_that_are_professors(ndx, gender, element) {
             }
         })
         .group(percentageThatAreProf)
+}
+
+function show_service_to_salary_correlation(ndx) {
+    var eDim = ndx.dimension(dc.pluck("yrs.service"));
+    // top 5 records by years of service
+   //console.log(eDim.top(5));
+    //console.log(eDim.top(5)[0].salary);
+    //console.log(eDim.top(5)[0]["yrs.service"]);
+    
+    var experienceDim = ndx.dimension(function(d) {
+        return [d["yrs.service"], d.salary];
+    });
+    var experienceSalaryGroup = experienceDim.group();
+    
+    console.log(experienceSalaryGroup.top(1)[0].key);
+    //console.log(experienceSalaryGroup.top(1)[0].value);
+    
+    var minExperience = eDim.bottom(1)[0]["yrs.service"];
+    var maxExperience = eDim.top(1)[0]["yrs.service"];
+    
+    dc.scatterPlot("#service-salary")
+        .width(800)
+        .height(400)
+        .x(d3.scale.linear().domain([minExperience, maxExperience]))
+        .brushOn(false)
+        .symbolSize(8)
+        .clipPadding(10)
+        .xAxisLabel("Years Of Service")
+        .title(function(d) {
+            return d.key[0] + " earned " + d.key[1];
+        })
+        .dimension(experienceDim)
+        .group(experienceSalaryGroup)
+        .margins({top: 10, right: 50, bottom: 75, left: 75});
 }

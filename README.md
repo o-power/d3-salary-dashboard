@@ -17,4 +17,4 @@ Data downloaded using `wget` from [Salaries.csv](https://raw.githubusercontent.c
 
 ## CSS libraries
 1. dc.min.css
-2. 
+2. Litera theme from [Bootswatch](https://bootswatch.com/)
